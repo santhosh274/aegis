@@ -1,0 +1,5 @@
+[project]
+name = "aegis"
+version = "0.1.0"
+description = "Autonomous Exploitation-Graded Incident-Verification System"
+requires-python = ">=3.11"

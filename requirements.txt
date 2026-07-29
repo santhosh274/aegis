@@ -1,0 +1,9 @@
+sqlalchemy
+psycopg2-binary
+reportlab
+python-dotenv
+networkx
+pydantic
+asyncio
+pytest
+python-nmap
