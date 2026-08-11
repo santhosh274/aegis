@@ -12,3 +12,6 @@ All tool adapters must be explicitly authorized and constrained to an isolated l
 
 See [PROJECT_UNDERSTANDING.md](PROJECT_UNDERSTANDING.md) for the architecture,
 knowledge matrix, scenario plan, and delivery sequence.
+
+For the first deterministic integration slice, see
+[the initial tool-chaining plan](docs/initial-tool-chaining-plan.md).

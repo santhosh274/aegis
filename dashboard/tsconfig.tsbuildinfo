@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/cyberbackground.tsx","./src/components/header.tsx","./src/components/liveconsole.tsx","./src/components/modulepanel.tsx","./src/components/pipelinevisualizer.tsx","./src/components/resourcegauges.tsx","./src/components/vulnerabilitygrid.tsx","./src/data/mockdata.ts"],"version":"5.9.3"}

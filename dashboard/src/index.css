@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #000000;
+  --color-surface: #0a0a0a;
+  --color-border: #262626;
+  --color-text: #ffffff;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #52525b;
+  --color-accent: #ffffff;
+  --color-badge-bg: #18181b;
+  --font-mono: "JetBrains Mono", "Geist Mono", "Fira Code", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: #000000;
+  color: #ffffff;
+  font-family: "JetBrains Mono", "Geist Mono", monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+@keyframes scan-progress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+.pulse-dot {
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.panel {
+  background: #0a0a0a;
+  border: 1px solid #262626;
+}
+
+.label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #52525b;
+}
+
+.severity-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.severity-critical {
+  background: #ffffff;
+  color: #000000;
+}
+
+.severity-high {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid #52525b;
+}
+
+.severity-medium {
+  background: #18181b;
+  color: #a1a1aa;
+  border: 1px solid #27272a;
+}
+
+.severity-low {
+  background: #0a0a0a;
+  color: #52525b;
+  border: 1px solid #262626;
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid #262626;
+  color: #a1a1aa;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.ghost-btn:hover {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.ghost-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.ghost-btn:disabled:hover {
+  border-color: #262626;
+  color: #a1a1aa;
+}
+
+.ghost-btn-primary {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #000000;
+}
+
+.ghost-btn-primary:hover {
+  background: #e4e4e7;
+  border-color: #e4e4e7;
+}
+
+.ghost-btn-primary:disabled {
+  background: #262626;
+  border-color: #262626;
+  color: #52525b;
+}
+
+.ghost-btn-primary:disabled:hover {
+  background: #262626;
+  border-color: #262626;
+  color: #52525b;
+}
