@@ -1,0 +1,43 @@
+{
+  "title": "vsftpd 2.3.4 backdoor (CVE-2011-2523)",
+  "target": "192.168.232.129",
+  "claim": "Backdoored vsftpd spawns a root shell listener on port 6200 when triggered",
+  "primary_evidence": {
+    "kind": "shell_access",
+    "summary": "vsftpd 2.3.4 backdoor payload accepted by 192.168.232.129:21 \u2014 listener expected on port 6200",
+    "source": "vsftpd_backdoor",
+    "collected_at": "2026-09-19T12:49:46.256687+00:00",
+    "digest": null,
+    "id": "fa148c28-f11a-4fec-99ba-e899cabb13f7"
+  },
+  "attack_chain": [
+    {
+      "plugin": "vsftpd_backdoor",
+      "action": "trigger_backdoor",
+      "target": "192.168.232.129",
+      "expected_predicate": "listener_open_on_6200",
+      "parameters": {},
+      "id": "c5d6ef8a-ebee-4bfa-9ef7-996fe1e45f3d"
+    }
+  ],
+  "confidence": "confirmed",
+  "status": "confirmed",
+  "corroborations": [
+    {
+      "probe": "rce_validation",
+      "outcome": "supports",
+      "evidence": {
+        "kind": "rce_check",
+        "summary": "benign nonce observed in independent shell session",
+        "source": "rce_validation",
+        "collected_at": "2026-09-19T12:49:56.261091+00:00",
+        "digest": null,
+        "id": "65f53993-3a9c-4839-9b5c-09967fe3f277"
+      },
+      "independent": true,
+      "rationale": "independent nonce predicate on shell listener"
+    }
+  ],
+  "id": "8f5465b8-3ab0-42c7-b6d2-bf731e493422",
+  "created_at": "2026-09-19T12:49:46.256792+00:00"
+}
