@@ -74,7 +74,7 @@ class LiveRceCorroborator:
             return Corroboration(
                 self.name,
                 CorroborationOutcome.AMBIGUOUS,
-                Evidence("rce_check", f"shell not reachable on port 6200: {exc}", self.name),
+                Evidence("rce_check", f"could not establish independent session on port 6200: {exc}", self.name),
                 True,
                 "independent nonce predicate on shell listener",
             )

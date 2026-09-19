@@ -1,0 +1,41 @@
+{
+  "scenario": "vsftpd_unpatched",
+  "title": "Fixture validation claim",
+  "target": "10.0.0.5",
+  "claim": "A fixture predicate indicates a controlled validation condition",
+  "confidence": "confirmed",
+  "status": "reopened",
+  "verification_verdict": "reopened",
+  "primary_evidence": {
+    "kind": "primary_claim",
+    "summary": "fixture validation predicate observed",
+    "source": "fixture_validation",
+    "id": "a9d3e597-e4fa-4312-abc7-08d7c9074b5d"
+  },
+  "attack_chain": [
+    {
+      "plugin": "fixture_validation",
+      "action": "benign_validation",
+      "target": "10.0.0.5",
+      "expected_predicate": "validate http/8080 on 10.0.0.5",
+      "parameters": {},
+      "id": "bf2c7a75-2aa6-4a73-9705-a2a5f19c6be4"
+    }
+  ],
+  "corroborations": [
+    {
+      "probe": "rce_validation",
+      "outcome": "supports",
+      "independent": true,
+      "rationale": "separate session and nonce predicate",
+      "evidence": {
+        "kind": "rce_check",
+        "summary": "benign nonce observed in independent session",
+        "source": "rce_validation",
+        "id": "36f458ed-1938-4a19-8d51-cdcf25019afc"
+      }
+    }
+  ],
+  "finding_id": "df84f2ed-dffa-45b8-8f0a-f2985551b65b",
+  "created_at": "2026-09-19T17:06:47.140587+00:00"
+}
