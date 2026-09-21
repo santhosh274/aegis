@@ -1,144 +1,144 @@
 [
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "ftp",
     "port": 21,
     "fingerprint": "ftp/21 (vsftpd 2.3.4)"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "ssh",
     "port": 22,
     "fingerprint": "ssh/22 (OpenSSH 4.7p1 Debian 8ubuntu1)"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "telnet",
     "port": 23,
     "fingerprint": "telnet/23 (Linux telnetd )"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "smtp",
     "port": 25,
     "fingerprint": "smtp/25 (Postfix smtpd )"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "domain",
     "port": 53,
     "fingerprint": "domain/53 (ISC BIND 9.4.2)"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "http",
     "port": 80,
     "fingerprint": "http/80 (Apache httpd 2.2.8)"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "rpcbind",
     "port": 111,
     "fingerprint": "rpcbind/111"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "netbios-ssn",
     "port": 139,
     "fingerprint": "netbios-ssn/139 (Samba smbd 3.X - 4.X)"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "netbios-ssn",
     "port": 445,
     "fingerprint": "netbios-ssn/445 (Samba smbd 3.X - 4.X)"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "exec",
     "port": 512,
-    "fingerprint": "exec/512"
+    "fingerprint": "exec/512 (netkit-rsh rexecd )"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "login",
     "port": 513,
     "fingerprint": "login/513"
   },
   {
-    "target": "192.168.232.129",
-    "service": "shell",
+    "target": "192.168.52.139",
+    "service": "tcpwrapped",
     "port": 514,
-    "fingerprint": "shell/514"
+    "fingerprint": "tcpwrapped/514"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "java-rmi",
     "port": 1099,
     "fingerprint": "java-rmi/1099 (GNU Classpath grmiregistry )"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "bindshell",
     "port": 1524,
     "fingerprint": "bindshell/1524 (Metasploitable root shell )"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "rpcbind",
     "port": 2049,
     "fingerprint": "rpcbind/2049"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "mysql",
     "port": 3306,
     "fingerprint": "mysql/3306 (MySQL 5.0.51a-3ubuntu5)"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "distccd",
     "port": 3632,
     "fingerprint": "distccd/3632 (distccd v1)"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "postgresql",
     "port": 5432,
     "fingerprint": "postgresql/5432 (PostgreSQL DB 8.3.0 - 8.3.7)"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "vnc",
     "port": 5900,
     "fingerprint": "vnc/5900 (VNC )"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "X11",
     "port": 6000,
     "fingerprint": "X11/6000"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "irc",
     "port": 6667,
     "fingerprint": "irc/6667 (UnrealIRCd )"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "ajp13",
     "port": 8009,
     "fingerprint": "ajp13/8009 (Apache Jserv )"
   },
   {
-    "target": "192.168.232.129",
-    "service": "",
+    "target": "192.168.52.139",
+    "service": "http",
     "port": 8180,
-    "fingerprint": "/8180"
+    "fingerprint": "http/8180 (Apache Tomcat/Coyote JSP engine 1.1)"
   },
   {
-    "target": "192.168.232.129",
+    "target": "192.168.52.139",
     "service": "drb",
     "port": 8787,
     "fingerprint": "drb/8787 (Ruby DRb RMI )"

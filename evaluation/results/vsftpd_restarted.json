@@ -40,5 +40,6 @@
   ],
   "id": "bc3bfe84-5ffb-4731-922e-1982c9e13424",
   "created_at": "2026-09-20T14:57:20.137950+00:00",
-  "verification_verdict": "reopened"
+  "verification_verdict": "reopened",
+  "scenario": "vsftpd_restarted"
 }
