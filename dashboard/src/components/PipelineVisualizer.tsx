@@ -1,149 +1,109 @@
-import { motion } from "framer-motion";
-import {
-  Search,
-  Crosshair,
-  Bug,
-  Rocket,
-  FileBarChart,
-} from "lucide-react";
-import type { PipelineStage, NodeStatus } from "../data/mockData";
+import { Check, X, CircleDot } from "lucide-react";
+import { cn } from "../lib/utils";
+import type { PipelineEvent } from "../api/client";
 
-interface PipelineVisualizerProps {
-  stages: PipelineStage[];
+/**
+ * Horizontal MAPE-K-V pipeline. Active phase pulses with a glow (Verify glows red),
+ * a thin animated line connects completed phases, and each node shows its current
+ * status message. When idle, all nodes are dim.
+ */
+const NODES = [
+  { key: "monitor", label: "Monitor" },
+  { key: "analyze", label: "Analyze" },
+  { key: "plan", label: "Plan" },
+  { key: "execute", label: "Execute" },
+  { key: "verify", label: "Verify" },
+] as const;
+
+export type PhaseKind = "idle" | "running" | "complete" | "failed";
+
+interface Props {
+  /** phase -> state overrides, usually from the live SSE run */
+  phases?: Partial<Record<string, { kind: PhaseKind; message: string }>>;
+  /** fallback: derive per-phase state from an event log */
+  events?: PipelineEvent[];
+  compact?: boolean;
 }
 
-const stageIcons: Record<string, React.ReactNode> = {
-  "stage-1": <Search className="w-4 h-4" strokeWidth={1.5} />,
-  "stage-2": <Crosshair className="w-4 h-4" strokeWidth={1.5} />,
-  "stage-3": <Bug className="w-4 h-4" strokeWidth={1.5} />,
-  "stage-4": <Rocket className="w-4 h-4" strokeWidth={1.5} />,
-  "stage-5": <FileBarChart className="w-4 h-4" strokeWidth={1.5} />,
-};
-
-const statusStyles: Record<
-  NodeStatus,
-  { border: string; text: string; dot: string; bg: string }
-> = {
-  idle: {
-    border: "border-border border-dashed",
-    text: "text-text-muted",
-    dot: "bg-text-muted",
-    bg: "bg-surface",
-  },
-  running: {
-    border: "border-white",
-    text: "text-white",
-    dot: "bg-white pulse-dot",
-    bg: "bg-surface",
-  },
-  success: {
-    border: "border-white",
-    text: "text-white",
-    dot: "bg-white",
-    bg: "bg-white",
-  },
-  failed: {
-    border: "border-text-muted",
-    text: "text-text-secondary",
-    dot: "bg-text-muted",
-    bg: "bg-surface",
-  },
-};
-
-function formatDuration(ms: number | null): string {
-  if (ms === null) return "--";
-  if (ms < 1000) return `${ms}ms`;
-  return `${(ms / 1000).toFixed(1)}s`;
+function stateFor(
+  nodeKey: string,
+  phases: Props["phases"],
+  events: PipelineEvent[] | undefined
+): { kind: PhaseKind; message: string } {
+  const explicit = phases?.[nodeKey];
+  if (explicit) return explicit;
+  if (!events) return { kind: "idle", message: "" };
+  for (let i = events.length - 1; i >= 0; i--) {
+    if (events[i].phase === nodeKey) {
+      return { kind: events[i].status, message: events[i].message };
+    }
+  }
+  return { kind: "idle", message: "" };
 }
 
-export default function PipelineVisualizer({ stages }: PipelineVisualizerProps) {
+export function PipelineVisualizer({ phases, events, compact }: Props) {
+  const states = NODES.map((node) => ({
+    node,
+    state: stateFor(node.key, phases, events),
+  }));
+
+  const connectorClass = (prev: (typeof states)[number]) => {
+    if (prev.state.kind === "complete") return "complete";
+    if (prev.state.kind === "running")
+      return prev.node.key === "verify" ? "verify-flow" : "flowing";
+    return "";
+  };
+
   return (
-    <div className="panel p-5">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="label">Execution Pipeline</span>
-      </div>
-
-      <div className="flex items-stretch gap-0 overflow-x-auto">
-        {stages.map((stage, i) => {
-          const cfg = statusStyles[stage.status];
-          const isRunning = stage.status === "running";
-          const isSuccess = stage.status === "success";
-
-          return (
-            <div key={stage.id} className="flex items-center">
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08 }}
-                className={`relative border ${cfg.border} bg-surface p-3 min-w-[140px] transition-all duration-300`}
-              >
-                {isRunning && (
-                  <motion.div
-                    className="absolute top-0 left-0 h-[2px] bg-white"
-                    animate={{ width: ["0%", "100%", "0%"] }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 2.5,
-                      ease: "easeInOut",
-                    }}
-                  />
-                )}
-
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={cfg.text}>{stageIcons[stage.id]}</div>
-                  <span className="text-[11px] font-bold text-white tracking-wide">
-                    {stage.name}
-                  </span>
-                </div>
-
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {stage.modules.map((mod) => (
-                    <span
-                      key={mod}
-                      className="text-[9px] font-mono px-1.5 py-0.5 bg-badge-bg text-text-muted border border-border"
-                    >
-                      {mod}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between text-[10px] font-mono">
-                  <div className="flex items-center gap-1.5">
-                    <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                    <span className={cfg.text}>
-                      {stage.status.toUpperCase()}
-                    </span>
-                  </div>
-                  <span className="text-text-muted">
-                    {isRunning
-                      ? `${stage.latency}ms`
-                      : formatDuration(stage.duration)}
-                  </span>
-                </div>
-
-                {isSuccess && (
-                  <div className="absolute top-0 left-0 w-full h-[2px] bg-white" />
-                )}
-              </motion.div>
-
-              {i < stages.length - 1 && (
-                <div className="flex items-center px-1">
-                  <div
-                    className={`w-4 h-[1px] ${
-                      isSuccess ? "bg-white" : "bg-border border-dashed"
-                    }`}
-                  />
-                  <div
-                    className={`w-0 h-0 border-t-[3px] border-t-transparent border-b-[3px] border-b-transparent border-l-[5px] ${
-                      isSuccess ? "border-l-white" : "border-l-border"
-                    }`}
-                  />
-                </div>
+    <div className={cn("flex items-center gap-1", compact ? "py-1" : "py-4")}>
+      {states.map(({ node, state }, i) => (
+        <div key={node.key} className="flex flex-1 items-center">
+          <div
+            className={cn(
+              "pipeline-node",
+              state.kind === "running" && node.key === "verify" && "verify",
+              state.kind === "running" && node.key !== "verify" && "active",
+              state.kind === "complete" && "complete",
+              state.kind === "failed" && "failed"
+            )}
+          >
+            <div className="pipeline-node-circle">
+              {state.kind === "complete" ? (
+                <Check className="size-4" />
+              ) : state.kind === "failed" ? (
+                <X className="size-4" />
+              ) : state.kind === "running" ? (
+                <CircleDot className="size-4 animate-pulse" />
+              ) : (
+                <span className="font-mono text-[10px]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
               )}
             </div>
-          );
-        })}
-      </div>
+            <span className="pipeline-node-label">{node.label}</span>
+            <span
+              className={cn(
+                "pipeline-node-detail",
+                state.kind === "idle" && "text-muted-foreground"
+              )}
+            >
+              {state.kind === "idle"
+                ? "idle"
+                : state.kind === "running"
+                  ? "running"
+                  : state.message || state.kind}
+            </span>
+          </div>
+          {i < states.length - 1 && (
+            <div
+              className={cn(
+                "pipeline-connector",
+                connectorClass(states[i])
+              )}
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
 }

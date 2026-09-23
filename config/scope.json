@@ -1,0 +1,12 @@
+{
+  "allowed_hosts": ["192.168.52.139"],
+  "allowed_plugins": ["nmap_scanner", "vsftpd_backdoor", "rce_validation"],
+  "lab_mode": true,
+  "ports": "21-23,25,53,80,111,139,445,512-514,1099,1524,2049,3306,3632,5432,5900,6000,6667,8009,8180,8787",
+  "listener_port": 6200,
+  "timeouts": {
+    "connect": 5,
+    "listen": 8,
+    "replay_wait": 5
+  }
+}

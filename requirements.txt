@@ -3,7 +3,9 @@ psycopg2-binary
 reportlab
 python-dotenv
 networkx
-pydantic
+fastapi
+uvicorn[standard]
+python-multipart
 asyncio
 pytest
 python-nmap
