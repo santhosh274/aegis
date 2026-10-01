@@ -152,6 +152,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   getFindings: () => request<Finding[]>("/findings"),
   getFinding: (id: string) => request<Finding>(`/findings/${encodeURIComponent(id)}`),
+  deleteFinding: (id: string) =>
+    request<{ deleted: string }>(`/findings/${encodeURIComponent(id)}`, { method: "DELETE" }),
   remediate: (id: string) =>
     request<Finding>(`/findings/${encodeURIComponent(id)}/remediate`, { method: "POST" }),
   getStatus: () => request<RunStatus>("/status"),
@@ -292,7 +294,9 @@ export function connectFindingsWs(handlers: {
       setTimeout(open, delay);
     };
     ws.onerror = () => {
-      ws?.close();
+      // The close event always follows onerror for a failed connection —
+      // do not force a close-frame write on an already-dead socket, that
+      // just produces ECONNABORTED handshakes on the proxy side.
     };
   };
 

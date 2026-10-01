@@ -1,6 +1,7 @@
 import { AlertTriangle } from "lucide-react";
 import { cn } from "../lib/utils";
 import { ConfidenceBadge } from "./ConfidenceBadge";
+import { DeleteFindingButton } from "./DeleteFindingButton";
 import type { Finding } from "../api/client";
 
 /**
@@ -22,11 +23,11 @@ export function VerificationQueue({
         </p>
       )}
       {findings.map((f) => (
-        <button
+        <div
           key={f.id}
           onClick={() => onOpen?.(f)}
           className={cn(
-            "queue-card text-left rounded-md border border-border bg-surface p-3 transition-colors hover:border-muted-foreground/50",
+            "queue-card cursor-pointer rounded-md border border-border bg-surface p-3 transition-colors hover:border-muted-foreground/50",
             f.status === "reopened" && "reopened",
             f.verification_verdict === "regression_detected" && "regression_detected"
           )}
@@ -43,9 +44,15 @@ export function VerificationQueue({
             <span className="font-mono text-[11px] text-muted-foreground">
               {f.target}
             </span>
-            <ConfidenceBadge grade={f.confidence} />
+            <div className="flex items-center gap-1">
+              <ConfidenceBadge grade={f.confidence} />
+              <DeleteFindingButton
+                finding={f}
+                className="text-muted-foreground hover:text-destructive"
+              />
+            </div>
           </div>
-        </button>
+        </div>
       ))}
     </div>
   );

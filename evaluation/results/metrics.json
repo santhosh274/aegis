@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-09-23T01:19:37.598314+00:00",
-  "total_findings": 3,
+  "timestamp": "2026-09-23T12:47:11.329489+00:00",
+  "total_findings": 4,
   "false_positive_rate_adapt_baseline": 0.0,
   "false_positive_rate_aegis": 0.0,
   "fp_reduction_percent": 100.0,
@@ -8,13 +8,56 @@
   "confidence_confusion": {
     "('confirmed', 'confirmed')": 3
   },
-  "verification_accuracy": 0.6667,
-  "false_all_clear_rate": 0.3333,
+  "verification_accuracy": 0.5,
+  "false_all_clear_rate": 0.5,
   "verification_confusion": {
-    "reopened \u2192 reopened": 2,
+    "reopened \u2192 reopened": 1,
     "regression_detected \u2192 verified_closed": 1
   },
   "raw_results": [
+    {
+      "title": "vsftpd 2.3.4 backdoor (CVE-2011-2523)",
+      "target": "192.168.52.139",
+      "claim": "Backdoored vsftpd spawns a root shell listener on port 6200 when triggered",
+      "primary_evidence": {
+        "kind": "shell_access",
+        "summary": "vsftpd 2.3.4 backdoor payload accepted by 192.168.52.139:21 \u2014 listener expected on port 6200",
+        "source": "vsftpd_backdoor",
+        "collected_at": "2026-09-23T12:38:58.703485+00:00",
+        "digest": null,
+        "id": "f5a84f27-5e50-403c-a47e-8f0bce2a1249"
+      },
+      "attack_chain": [
+        {
+          "plugin": "vsftpd_backdoor",
+          "action": "trigger_backdoor",
+          "target": "192.168.52.139",
+          "expected_predicate": "listener_open_on_6200",
+          "parameters": {},
+          "id": "627fd34a-1248-4e12-a8a3-6ad03103707b"
+        }
+      ],
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "corroborations": [
+        {
+          "probe": "rce_validation",
+          "outcome": "supports",
+          "evidence": {
+            "kind": "rce_check",
+            "summary": "benign nonce observed in independent shell session",
+            "source": "rce_validation",
+            "collected_at": "2026-09-23T12:39:08.737450+00:00",
+            "digest": null,
+            "id": "70176203-d1b1-4235-905e-ce429e0773a8"
+          },
+          "independent": true,
+          "rationale": "independent nonce predicate on shell listener"
+        }
+      ],
+      "id": "5b5196da-f44b-46be-85d0-b65db6161fbe",
+      "created_at": "2026-09-23T12:38:58.703612+00:00"
+    },
     {
       "title": "vsftpd 2.3.4 backdoor (CVE-2011-2523)",
       "target": "192.168.52.139",
@@ -123,9 +166,9 @@
         "kind": "shell_access",
         "summary": "vsftpd 2.3.4 backdoor payload accepted by 192.168.52.139:21 \u2014 listener expected on port 6200",
         "source": "vsftpd_backdoor",
-        "collected_at": "2026-09-20T14:55:03.281968+00:00",
+        "collected_at": "2026-09-23T12:38:58.703485+00:00",
         "digest": null,
-        "id": "f002691b-8d8f-45dd-ac36-ebe44c01e3c4"
+        "id": "f5a84f27-5e50-403c-a47e-8f0bce2a1249"
       },
       "attack_chain": [
         {
@@ -134,7 +177,7 @@
           "target": "192.168.52.139",
           "expected_predicate": "listener_open_on_6200",
           "parameters": {},
-          "id": "e38862ac-357c-476a-bfa0-3a45086bc6a4"
+          "id": "627fd34a-1248-4e12-a8a3-6ad03103707b"
         }
       ],
       "confidence": "confirmed",
@@ -147,17 +190,16 @@
             "kind": "rce_check",
             "summary": "benign nonce observed in independent shell session",
             "source": "rce_validation",
-            "collected_at": "2026-09-20T14:55:13.310713+00:00",
+            "collected_at": "2026-09-23T12:39:08.737450+00:00",
             "digest": null,
-            "id": "dad07932-74f2-4be0-b9ec-33c6db4b1da9"
+            "id": "70176203-d1b1-4235-905e-ce429e0773a8"
           },
           "independent": true,
           "rationale": "independent nonce predicate on shell listener"
         }
       ],
-      "id": "41157287-0669-465b-803f-579972fa88a6",
-      "created_at": "2026-09-20T14:55:03.282032+00:00",
-      "verification_verdict": "reopened",
+      "id": "5b5196da-f44b-46be-85d0-b65db6161fbe",
+      "created_at": "2026-09-23T12:38:58.703612+00:00",
       "scenario": "vsftpd_unpatched",
       "ground_truth_exploitable": true,
       "ground_truth_fixed": false,

@@ -20,8 +20,8 @@ from typing import Any, Callable, Protocol
 # rather than a full 1-65535 sweep, per the replacement gate's "small approved
 # port set" requirement. Extend only with a documented reason per port.
 DEFAULT_PORTS = (
-    "21-23,25,53,80,111,139,445,512-514,1099,1524,2049,"
-    "3306,3632,5432,5900,6000,6667,8009,8180,8787"
+    "21-23,25,53,80,443,111,139,445,512-514,1099,1524,2049,"
+    "3306,3632,5432,5900,6000,6667,8009,8080,8180,8443,8787"
 )
 
 

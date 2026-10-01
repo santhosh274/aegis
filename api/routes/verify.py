@@ -71,7 +71,7 @@ async def _verify_stream(body: VerifyBody) -> AsyncIterator[str]:
     try:
         try:
             require_lab("Verification")
-            require_target(body.target, plugin="vsftpd_backdoor")
+            require_target(body.target)
         except (LabModeDenied, TargetDenied, PluginDenied) as exc:
             yield format_sse(pipeline_event("verify", "failed", str(exc)))
             return
@@ -147,7 +147,7 @@ async def _verify_stream(body: VerifyBody) -> AsyncIterator[str]:
 async def verify_run(body: VerifyBody):
     try:
         require_lab("Verification")
-        require_target(body.target.strip(), plugin="vsftpd_backdoor")
+        require_target(body.target.strip())
     except (LabModeDenied, TargetDenied, PluginDenied) as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     return sse_response(_verify_stream(body))

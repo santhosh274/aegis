@@ -34,3 +34,10 @@ export function isValidIpv4(value: string): boolean {
     return n >= 0 && n <= 255;
   });
 }
+
+/** Bare hostname (e.g. "target.example.com") — no scheme, path, or port. */
+export function isValidHostname(value: string): boolean {
+  if (!value || value.length > 253) return false;
+  if (isValidIpv4(value)) return true;
+  return /^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/i.test(value);
+}

@@ -1,9 +1,17 @@
 from __future__ import annotations
 
+import asyncio
+
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
 
-from api.findings_io import get_finding, load_raw_findings, mark_remediated, notify_finding
+from api.findings_io import (
+    delete_finding,
+    get_finding,
+    load_raw_findings,
+    mark_remediated,
+    notify_finding,
+)
 from api.runtime import runtime
 from api.scope_store import load_scope, save_scope
 from plugins.scanners.nmap_scanner import DEFAULT_PORTS
@@ -42,6 +50,13 @@ async def finding_remediate(finding_id: str):
     return updated
 
 
+@router.delete("/findings/{finding_id}")
+async def finding_delete(finding_id: str):
+    if not delete_finding(finding_id):
+        raise HTTPException(status_code=404, detail="Finding not found")
+    return {"deleted": finding_id}
+
+
 @router.get("/status")
 async def status():
     return runtime.snapshot()
@@ -57,13 +72,24 @@ async def post_settings(body: ScopeBody):
     return save_scope(body.model_dump())
 
 
+# Idle-connection keepalive. Sends a JSON "ping" every HEARTBEAT_SECONDS so
+# intermediaries don't time out quiet sockets and a dead peer is detected fast.
+HEARTBEAT_SECONDS = 20
+
+
 async def findings_ws(ws: WebSocket):
     await ws.accept()
     await runtime.register(ws)
     try:
         await ws.send_json({"type": "hello", "findings": load_raw_findings()})
         while True:
-            await ws.receive_text()
+            try:
+                await asyncio.wait_for(ws.receive_text(), timeout=HEARTBEAT_SECONDS)
+            except asyncio.TimeoutError:
+                try:
+                    await ws.send_json({"type": "ping"})
+                except Exception:
+                    break
     except WebSocketDisconnect:
         pass
     finally:

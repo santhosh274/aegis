@@ -24,6 +24,7 @@ interface AegisState {
   setStatus: (status: RunStatus) => void;
   upsertFindings: (findings: Finding[]) => void;
   replaceFindings: (findings: Finding[]) => void;
+  removeFinding: (id: string) => void;
   pushEvents: (events: PipelineEvent[]) => void;
   clearPipeline: () => void;
   resetPhases: () => void;
@@ -67,6 +68,9 @@ export const useAegisStore = create<AegisState>((set) => ({
     set({
       findings: [...findings].sort((a, b) => b.created_at.localeCompare(a.created_at)),
     }),
+
+  removeFinding: (id) =>
+    set((state) => ({ findings: state.findings.filter((f) => f.id !== id) })),
 
   pushEvents: (events) =>
     set((state) => {

@@ -60,6 +60,36 @@ def get_finding(finding_id: str) -> dict[str, Any] | None:
     return None
 
 
+def delete_finding(finding_id: str) -> bool:
+    """Delete a finding record and its files, plus matching verification history."""
+    path = finding_path_for(finding_id)
+    if path is None or not path.exists():
+        return False
+    try:
+        path.unlink()
+    except OSError:
+        return False
+    if path != LIVE_FINDING and LIVE_FINDING.exists():
+        try:
+            live = json.loads(LIVE_FINDING.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            live = {}
+        if live.get("id") == finding_id:
+            LIVE_FINDING.unlink(missing_ok=True)
+    if HISTORY_PATH.exists():
+        try:
+            history = json.loads(HISTORY_PATH.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            history = []
+        if isinstance(history, list):
+            pruned = [e for e in history if e.get("finding_id") != finding_id]
+            if len(pruned) != len(history):
+                HISTORY_PATH.write_text(
+                    json.dumps(pruned, indent=2, default=str), encoding="utf-8"
+                )
+    return True
+
+
 def finding_path_for(finding_id: str) -> Path | None:
     item = get_finding(finding_id)
     if not item:

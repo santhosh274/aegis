@@ -13,3 +13,4 @@ build/
 coverage/
 htmlcov/
 .pytest_cache/
+tsconfig.tsbuildinfo

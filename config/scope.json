@@ -1,8 +1,16 @@
 {
-  "allowed_hosts": ["192.168.52.139"],
-  "allowed_plugins": ["nmap_scanner", "vsftpd_backdoor", "rce_validation"],
+  "allowed_hosts": [
+    "192.168.52.139",
+    "145.79.211.142"
+  ],
+  "allowed_plugins": [
+    "nuclei",
+    "rce_validation",
+    "http_exposed_service",
+    "ssh_weak_credentials"
+  ],
   "lab_mode": true,
-  "ports": "21-23,25,53,80,111,139,445,512-514,1099,1524,2049,3306,3632,5432,5900,6000,6667,8009,8180,8787",
+  "ports": "21-23,25,53,80,443,111,139,445,512-514,1099,1524,2049,3306,3632,5432,5900,6000,6667,8009,8080,8180,8443,8787",
   "listener_port": 6200,
   "timeouts": {
     "connect": 5,

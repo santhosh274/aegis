@@ -16,11 +16,17 @@ from core.monitor.scanner_manager import ScannerManager
 from core.plan.planner import Planner
 from core.verify.regression_detector import Exposure
 from core.verify.replay_engine import ReplayEngine
-from plugins.corroboration.rce_validation import LiveRceCorroborator
-from plugins.exploits.vsftpd_backdoor import VsftpdBackdoorAdapter, VsftpdBackdoorError
+from plugins.registry import (
+    CORROBORATORS,
+    EXPLOIT_META,
+    EXPLOITS,
+    choose_exploit,
+    reproduce,
+)
 from plugins.scanners.nmap_scanner import NmapDiscoveryAdapter
+from plugins.scanners.nuclei_scanner import NucleiScannerAdapter
 
-from api.scope_store import policy_from_scope
+from api.scope_store import load_scope, policy_from_scope
 from api.serialize import finding_dict, observation_dict
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -49,27 +55,87 @@ def discover_target(target: str, ports: str, timeout_seconds: int) -> dict[str, 
     }
 
 
-def trigger_exploit(target: str) -> Finding:
+def trigger_exploit(
+    target: str,
+    *,
+    plugin: str | None = None,
+    observations: list[str] | None = None,
+) -> Finding:
+    """Run the selected (or engine-selected) exploit adapter.
+
+    When ``plugin`` is None the adapter is chosen from ``observations`` using
+    importance-ranked MITRE ATT&CK planning (choose_exploit). The chosen step
+    is always a declarative AttackStep run through the scope-gated Executor.
+    """
+    scope = load_scope()
+    if plugin is None:
+        values = [str(v) for v in (observations or [])]
+        if not values:
+            raise ValueError(
+                "no exploit plugin was specified and no observations were "
+                "provided to plan the exploit from"
+            )
+        plugin = choose_exploit(values, scope.get("allowed_plugins") or ())
+        if plugin is None:
+            raise ValueError(
+                "no allowlisted exploit adapter matches the observed services; "
+                "enable one in Settings or target a recognised service"
+            )
+
+    meta = EXPLOIT_META.get(plugin)
+    if meta is None:
+        raise ValueError(f"exploit plugin {plugin!r} is not registered")
+
     policy = policy_from_scope()
-    executor = Executor(policy=policy, plugins={"vsftpd_backdoor": VsftpdBackdoorAdapter()})
+    executor = Executor(policy=policy, plugins=dict(EXPLOITS))
     step = AttackStep(
-        plugin="vsftpd_backdoor",
-        action="trigger_backdoor",
+        plugin=plugin,
+        action=meta["action"],
         target=target,
-        expected_predicate="listener_open_on_6200",
+        expected_predicate=meta["expected_predicate"],
     )
     primary_evidence = executor.execute(step)
     return Finding(
-        title="vsftpd 2.3.4 backdoor (CVE-2011-2523)",
+        title=meta["title"],
         target=target,
-        claim="Backdoored vsftpd spawns a root shell listener on port 6200 when triggered",
+        claim=meta["claim"],
         primary_evidence=primary_evidence,
         attack_chain=[step],
     )
 
 
+def web_vuln_check(target: str, timeout_seconds: int) -> dict[str, Any]:
+    adapter = NucleiScannerAdapter(timeout_seconds=timeout_seconds)
+    raw_records = adapter.discover(target)
+    observations = ScannerManager().normalize(target, adapter.name, raw_records)
+    return {"observations": [observation_dict(obs) for obs in observations], "raw_records": raw_records}
+
+
+def reachability_probe(
+    target: str,
+    ports: tuple[int, ...] = (80, 443, 8080, 8443, 22, 21),
+    timeout: float = 3.0,
+) -> list[int]:
+    """Cheap TCP-connect probe of a few common ports.
+
+    Used only to explain an empty nmap result: a host that accepts a TCP
+    connection but exposes nothing in the scanned range is a very different
+    situation from a host that does not answer at all.
+    """
+    reachable: list[int] = []
+    for port in ports:
+        try:
+            with socket.create_connection((target, port), timeout=timeout):
+                reachable.append(port)
+        except OSError:
+            continue
+    return reachable
+
+
 def corroborate_finding(finding: Finding) -> Finding:
-    DevilsAdvocate().validate(finding, [LiveRceCorroborator()])
+    plugin = finding.attack_chain[0].plugin if finding.attack_chain else None
+    probes = list(CORROBORATORS.get(plugin, [])) if plugin else []
+    DevilsAdvocate().validate(finding, probes)
     return finding
 
 
@@ -161,14 +227,8 @@ def replay_finding(
     after_rows = capture_exposures(target, ports, timeout_seconds)
     after_set = exposures_from_dicts(after_rows)
 
-    adapter = VsftpdBackdoorAdapter()
-
     def execute_step(step) -> bool:
-        try:
-            adapter.run(step)
-            return True
-        except VsftpdBackdoorError:
-            return False
+        return reproduce(step)
 
     result = ReplayEngine().verify(
         finding,

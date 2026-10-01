@@ -13,7 +13,14 @@ SCOPE_PATH = ROOT / "config" / "scope.json"
 
 DEFAULT_SCOPE: dict[str, Any] = {
     "allowed_hosts": ["192.168.52.139"],
-    "allowed_plugins": ["nmap_scanner", "vsftpd_backdoor", "rce_validation"],
+    "allowed_plugins": [
+        "nmap_scanner",
+        "nuclei",
+        "vsftpd_backdoor",
+        "ssh_weak_credentials",
+        "http_exposed_service",
+        "rce_validation",
+    ],
     "lab_mode": True,
     "ports": DEFAULT_PORTS,
     "listener_port": 6200,

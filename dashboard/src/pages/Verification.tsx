@@ -23,6 +23,7 @@ import {
   TableCell,
 } from "../components/ui/table";
 import { ConfidenceBadge } from "../components/ConfidenceBadge";
+import { DeleteFindingButton } from "../components/DeleteFindingButton";
 import { TerminalLog } from "../components/TerminalLog";
 import { usePipelineRun, extractEventData } from "../hooks/usePipelineRun";
 import { useAegisStore } from "../store/useAegisStore";
@@ -159,15 +160,15 @@ export default function Verification() {
             </Card>
           )}
           {pending.map((f) => (
-            <button
+            <div
               key={f.id}
               onClick={() => selectFinding(f)}
               className={cn(
-                "flex items-center justify-between gap-3 rounded-md border border-border bg-card p-4 text-left transition-colors hover:border-muted-foreground/50",
+                "flex cursor-pointer items-center justify-between gap-3 rounded-md border border-border bg-card p-4 text-left transition-colors hover:border-muted-foreground/50",
                 selected?.id === f.id && "border-primary/60"
               )}
             >
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-medium">{f.title}</div>
                 <div className="mt-1 font-mono text-[11px] text-muted-foreground">
                   {f.target}
@@ -178,8 +179,12 @@ export default function Verification() {
                 <Button size="sm" onClick={() => selectFinding(f)}>
                   <Play /> Start Verification
                 </Button>
+                <DeleteFindingButton
+                  finding={f}
+                  className="text-muted-foreground hover:text-destructive"
+                />
               </div>
-            </button>
+            </div>
           ))}
         </div>
 
@@ -324,12 +329,13 @@ export default function Verification() {
               <TableHead>Verdict</TableHead>
               <TableHead>Target State</TableHead>
               <TableHead>Timestamp</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {history.length === 0 && (
               <TableRow>
-                <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
                   No verification runs recorded yet.
                 </TableCell>
               </TableRow>
@@ -361,6 +367,16 @@ export default function Verification() {
                 </TableCell>
                 <TableCell className="font-mono text-[11px] text-muted-foreground">
                   {formatTime(row.timestamp)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <DeleteFindingButton
+                    finding={{
+                      id: row.finding_id,
+                      title: row.finding_title,
+                      target: row.target,
+                    }}
+                    className="text-muted-foreground hover:text-destructive"
+                  />
                 </TableCell>
               </TableRow>
             ))}

@@ -13,6 +13,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { ConfidenceBadge } from "./ConfidenceBadge";
 import { LifecycleChip } from "./LifecycleChip";
 import { LifecycleTimeline } from "./LifecycleTimeline";
+import { DeleteFindingButton } from "./DeleteFindingButton";
 import { formatTime } from "../lib/utils";
 import { useNavigate } from "react-router-dom";
 import { api, type Finding } from "../api/client";
@@ -227,6 +228,13 @@ export function FindingDrawer({
           <Button size="sm" variant="ghost" onClick={exportJson}>
             <Download /> Export Finding JSON
           </Button>
+          <DeleteFindingButton
+            finding={finding}
+            variant="destructive"
+            showLabel
+            onDeleted={() => onOpenChange(false)}
+            className="ml-auto"
+          />
         </div>
       </SheetContent>
     </Sheet>

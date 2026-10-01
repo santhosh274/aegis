@@ -15,6 +15,7 @@ import {
 import { ConfidenceBadge } from "../components/ConfidenceBadge";
 import { LifecycleChip } from "../components/LifecycleChip";
 import { FindingDrawer } from "../components/FindingDrawer";
+import { DeleteFindingButton } from "../components/DeleteFindingButton";
 import { api, type ConfidenceGrade, type Finding, type FindingStatus } from "../api/client";
 import { formatDate } from "../lib/utils";
 import { cn } from "../lib/utils";
@@ -224,16 +225,22 @@ export default function Findings() {
                     : "—"}
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSelected(f);
-                      setDrawerOpen(true);
-                    }}
-                  >
-                    Open
-                  </Button>
+                  <div className="flex items-center justify-end gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelected(f);
+                        setDrawerOpen(true);
+                      }}
+                    >
+                      Open
+                    </Button>
+                    <DeleteFindingButton
+                      finding={f}
+                      className="text-muted-foreground hover:text-destructive"
+                    />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

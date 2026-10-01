@@ -8,11 +8,14 @@ import { Switch } from "../components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { useAegisStore } from "../store/useAegisStore";
 import { useLiveData } from "../hooks/useLiveData";
-import { isValidIpv4 } from "../lib/utils";
+import { isValidHostname } from "../lib/utils";
 
 const PLUGIN_ROSTER = [
   { id: "nmap_scanner", label: "nmap_scanner", hint: "service discovery", enabled: true },
-  { id: "vsftpd_backdoor", label: "vsftpd_backdoor", hint: "exploit adapter", enabled: true },
+  { id: "nuclei", label: "nuclei", hint: "web vulnerability scanner (JSONL)", enabled: true },
+  { id: "vsftpd_backdoor", label: "vsftpd_backdoor", hint: "exploit adapter (T1190)", enabled: true },
+  { id: "ssh_weak_credentials", label: "ssh_weak_credentials", hint: "exploit adapter (T1078)", enabled: true },
+  { id: "http_exposed_service", label: "http_exposed_service", hint: "exploit adapter (T1190)", enabled: true },
   { id: "rce_validation", label: "rce_validation", hint: "devil's-advocate corroboration", enabled: true },
 ];
 
@@ -57,8 +60,8 @@ export default function Settings() {
 
   const addHost = () => {
     const ip = hostInput.trim();
-    if (!isValidIpv4(ip)) {
-      setErr("Host must be a valid IPv4 address.");
+    if (!isValidHostname(ip)) {
+      setErr("Host must be a valid IPv4 address or hostname.");
       return;
     }
     if (hosts.includes(ip)) {
@@ -202,7 +205,14 @@ export default function Settings() {
                   setLabMode(c);
                   if (!c) {
                     setPlugins((prev) =>
-                      prev.filter((p) => p !== "vsftpd_backdoor")
+                      prev.filter(
+                        (p) =>
+                          ![
+                            "vsftpd_backdoor",
+                            "ssh_weak_credentials",
+                            "http_exposed_service",
+                          ].includes(p)
+                      )
                     );
                   }
                 }}

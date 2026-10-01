@@ -9,6 +9,7 @@ import { VerificationQueue } from "../components/VerificationQueue";
 import { ConfidenceBadge } from "../components/ConfidenceBadge";
 import { LifecycleChip } from "../components/LifecycleChip";
 import { FindingDrawer } from "../components/FindingDrawer";
+import { DeleteFindingButton } from "../components/DeleteFindingButton";
 import { severityChip } from "../lib/severity";
 import { trendFor, distinctTargets } from "../lib/trends";
 import { formatTime } from "../lib/utils";
@@ -17,9 +18,9 @@ import type { Finding } from "../api/client";
 function FeedRow({ finding, onOpen }: { finding: Finding; onOpen: () => void }) {
   const sev = severityChip(finding);
   return (
-    <button
+    <div
       onClick={onOpen}
-      className="finding-new flex w-full items-center gap-3 rounded-md border border-border bg-surface px-3 py-2.5 text-left transition-colors hover:border-muted-foreground/50"
+      className="finding-new group flex w-full cursor-pointer items-center gap-3 rounded-md border border-border bg-surface px-3 py-2.5 text-left transition-colors hover:border-muted-foreground/50"
     >
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium">{finding.title}</div>
@@ -37,7 +38,11 @@ function FeedRow({ finding, onOpen }: { finding: Finding; onOpen: () => void }) 
       </span>
       <LifecycleChip status={finding.status} className="shrink-0" />
       <ConfidenceBadge grade={finding.confidence} className="shrink-0" />
-    </button>
+      <DeleteFindingButton
+        finding={finding}
+        className="shrink-0 text-muted-foreground opacity-70 hover:text-destructive group-hover:opacity-100"
+      />
+    </div>
   );
 }
 
